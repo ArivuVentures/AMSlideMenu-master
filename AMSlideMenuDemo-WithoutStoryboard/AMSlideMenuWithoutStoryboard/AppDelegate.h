@@ -8,8 +8,11 @@
 
 #import <UIKit/UIKit.h>
 
+@class LoginVC;
+
 @interface AppDelegate : UIResponder <UIApplicationDelegate,NSURLConnectionDelegate> {
     NSMutableData *receivedData;
+    LoginVC *mainVC;
 }
 
 @property (strong, nonatomic) UIWindow *window;

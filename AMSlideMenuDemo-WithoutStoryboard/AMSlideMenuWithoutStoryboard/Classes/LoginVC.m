@@ -46,6 +46,7 @@
         // The session state handler (in the app delegate) will be called automatically
         [FBSession.activeSession closeAndClearTokenInformation];
         
+        [self changeButtonAfterLogout];
         // If the session state is not any of the two "open" states when the button is clicked
     } else {
         // Open a session showing the user the login UI
@@ -61,6 +62,18 @@
              [appDelegate sessionStateChanged:session state:state error:error];
          }];
     }
+}
+
+-(void)alreadyLoggedIn:(NSDictionary *)iGraphuser{
+    if (iGraphuser) {
+        NSString *str = [NSString stringWithFormat:@"Sign in as %@",[iGraphuser valueForKey:@"name"]];
+        [fbButton setImage:[UIImage imageNamed:@""] forState:UIControlStateNormal];
+        [fbButton setTitle:@"" forState:UIControlStateNormal];
+    }
+}
+
+-(void)changeButtonAfterLogout{
+        [fbButton setImage:[UIImage imageNamed:@"Login_btn"] forState:UIControlStateNormal];
 }
 
 

@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface LoginVC : UIViewController
+@interface LoginVC : UIViewController {
+   IBOutlet UIButton *fbButton;
+}
 
 @end

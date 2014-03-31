@@ -46,7 +46,7 @@
         self.window.rootViewController = startNVC;
         
     } else{
-        LoginVC *mainVC = [[LoginVC alloc] initWithNibName:@"LoginVC" bundle:nil];
+        mainVC = [[LoginVC alloc] initWithNibName:@"LoginVC" bundle:nil];
         UINavigationController *startNVC = [[UINavigationController alloc] initWithRootViewController:mainVC];
         self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
         self.window.rootViewController = startNVC;
@@ -131,11 +131,7 @@
         [[FBRequest requestForMe] startWithCompletionHandler:
          ^(FBRequestConnection *connection, NSDictionary<FBGraphUser> *user, NSError *error) {
              if (!error) {
-                 //Convert String to dictionary using JSON
-                 NSString *jsonString = user.description;
-                 NSData *data = [jsonString dataUsingEncoding:NSUTF8StringEncoding];
-                 id json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
-                 [self verifyLoginDetails:json];
+                 [self verifyLoginDetails:user];
              }
          }];
         
@@ -213,8 +209,10 @@
     [request setHTTPMethod:@"POST"];
     
     //initialize a post data
-    NSString *postData = [NSString stringWithFormat:@"<Reuqest><Data><type>1</type><username>%@</username><email>%@</email><firstname>%@</firstname><lastname>%@</lastname><favteam>1</favteam><fbid>%@</fbid><link>%@</link><name>%@</name></Data></Reuqest>",[iDetailDict valueForKey:@"username"],[iDetailDict valueForKey:@"email"],[iDetailDict valueForKey:@"first_name"],[iDetailDict valueForKey:@"last_name"],[iDetailDict valueForKey:@"id"],[iDetailDict valueForKey:@"link"],[iDetailDict valueForKey:@"name"]];
+    NSString *postData = [NSString stringWithFormat:@"<Reuqest><Data><type>1</type><username>%@</username><email>%@</email><firstname>%@</firstname><lastname>%@</lastname><favteam>1</favteam><fbid>%@</fbid><link>%@</link><name>%@</name></Data></Reuqest>",[iDetailDict valueForKey:@"username"],@"a@a.com",[iDetailDict valueForKey:@"first_name"],[iDetailDict valueForKey:@"last_name"],[iDetailDict valueForKey:@"id"],[iDetailDict valueForKey:@"link"],[iDetailDict valueForKey:@"name"]];
     [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    [request setValue:@"RegisterUserMessage" forHTTPHeaderField:@"message"];
+//    [request setValue:postData forHTTPHeaderField:@"data"];
     
     //set post data of request
     [request setHTTPBody:[postData dataUsingEncoding:NSUTF8StringEncoding]];
@@ -253,7 +251,7 @@
     NSError *e = nil;
     NSArray *jsonArray = [NSJSONSerialization JSONObjectWithData: self.receivedData options: NSJSONReadingMutableContainers error: &e];  //I am using sbjson to parse
     
-    NSLog(@"data %@",jsonArray);  //here is your output
+    NSLog(@"JSON data %@",jsonArray);  //here is your output
     
     //show controller with navigation
     
