@@ -18,22 +18,22 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     
-    // Whenever a person opens the app, check for a cached session
-    if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) {
-        
-        // If there's one, just open the session silently, without showing the user the login UI
-        [FBSession openActiveSessionWithReadPermissions:@[@"basic_info"]
-                                           allowLoginUI:NO
-                                      completionHandler:^(FBSession *session, FBSessionState state, NSError *error) {
-                                          // Handler for session state changes
-                                          // This method will be called EACH time the session state changes,
-                                          // also for intermediate states and NOT just when the session open
-                                          [self sessionStateChanged:session state:state error:error];
-                                      }];
-        
-    }
-    
-
+//    // Whenever a person opens the app, check for a cached session
+//    if (FBSession.activeSession.state == FBSessionStateCreatedTokenLoaded) {
+//        
+//        // If there's one, just open the session silently, without showing the user the login UI
+//        [FBSession openActiveSessionWithReadPermissions:@[@"basic_info"]
+//                                           allowLoginUI:NO
+//                                      completionHandler:^(FBSession *session, FBSessionState state, NSError *error) {
+//                                          // Handler for session state changes
+//                                          // This method will be called EACH time the session state changes,
+//                                          // also for intermediate states and NOT just when the session open
+//                                          [self sessionStateChanged:session state:state error:error];
+//                                      }];
+//        
+//    }
+//    
+//
     
     
     
@@ -195,7 +195,6 @@
 }
 
 -(void)verifyLoginDetails:(NSDictionary *)iDetailDict {
-    //initialize new mutable data
     NSMutableData *data = [[NSMutableData alloc] init];
     self.receivedData = data;
     
@@ -208,21 +207,25 @@
     //set http method
     [request setHTTPMethod:@"POST"];
     
-    //initialize a post data
-    NSString *postData = [NSString stringWithFormat:@"<Reuqest><Data><type>1</type><username>%@</username><email>%@</email><firstname>%@</firstname><lastname>%@</lastname><favteam>1</favteam><fbid>%@</fbid><link>%@</link><name>%@</name></Data></Reuqest>",[iDetailDict valueForKey:@"username"],@"a@a.com",[iDetailDict valueForKey:@"first_name"],[iDetailDict valueForKey:@"last_name"],[iDetailDict valueForKey:@"id"],[iDetailDict valueForKey:@"link"],[iDetailDict valueForKey:@"name"]];
-    [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:@"RegisterUserMessage" forHTTPHeaderField:@"message"];
-//    [request setValue:postData forHTTPHeaderField:@"data"];
     
-    //set post data of request
-    [request setHTTPBody:[postData dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    NSString *strData = [NSString stringWithFormat:@"message=RegisterUserMessage&data=<Reuqest><Data><type>1</type><username>%@</username><email>%@</email><firstname>%@</firstname><lastname>%@</lastname><favteam>1</favteam><fbid>%@</fbid><link>%@</link><name>%@</name></Data></Reuqest>",[iDetailDict valueForKey:@"username"],@"a@a.com",[iDetailDict valueForKey:@"first_name"],[iDetailDict valueForKey:@"last_name"],[iDetailDict valueForKey:@"id"],[iDetailDict valueForKey:@"link"],[iDetailDict valueForKey:@"name"]];
+    
+    [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
+    
+    
+    if (strData != nil) {
+        const char *bytes = [[NSString stringWithString:strData] UTF8String];
+        [request setHTTPBody:[NSData dataWithBytes:bytes length:strlen(bytes)]];
+    }
+    [request setTimeoutInterval:120];
+    
     
     //initialize a connection from request
     NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     
     //start the connection
     [connection start];
-
     
 }
 
